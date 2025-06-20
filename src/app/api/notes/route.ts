@@ -10,6 +10,10 @@ export async function GET() {
   return NextResponse.json(notes);
 }
 
+// export async function GET() {
+//   return Response.json([{ id: 1, title: "Test", content: "This is a test." }]);
+// }
+
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { title, content } = body;

@@ -1,19 +1,46 @@
 import { PrismaClient } from "@prisma/client";
-
+import { NextRequest, NextResponse } from "next/server";
 const prisma = new PrismaClient();
 
+// export async function POST(
+//   req: Request,
+//   { params }: { params: { id: string } }
+// ) {
+//   const noteId = Number(params.id);
+//   if (isNaN(noteId)) {
+//     return new Response("Invalid ID", { status: 400 });
+//   }
+
+//   await prisma.note.delete({
+//     where: { id: noteId },
+//   });
+
+//   return new Response(null, { status: 204 }); // No Content
+// }
+
 export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
-  const noteId = Number(params.id);
+  const { id } = await context.params;
+  const noteId = Number(id);
+
   if (isNaN(noteId)) {
     return new Response("Invalid ID", { status: 400 });
   }
 
-  await prisma.note.delete({
-    where: { id: noteId },
-  });
+  try {
+    await prisma.note.delete({
+      where: { id: noteId },
+    });
 
-  return new Response(null, { status: 204 }); // No Content
+    return new Response(null, { status: 204 }); // success
+  } catch (error: any) {
+    if (error.code === "P2025") {
+      return NextResponse.json({ error: "Note not found" }, { status: 404 });
+    }
+
+    console.error("Delete error:", error);
+    return new Response("Server error", { status: 500 });
+  }
 }

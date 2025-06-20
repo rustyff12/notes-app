@@ -57,7 +57,7 @@ export default function Home() {
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
         >
           Add Note
         </button>
@@ -67,7 +67,7 @@ export default function Home() {
         {notes.map((note) => (
           <li key={note.id} className="border p-3 mb-2 rounded hover:shadow">
             <Link href={`/notes/${note.id}`}>
-              <h3 className="font-semibold text-blue-600 hover:underline">
+              <h3 className="font-semibold text-blue-600 hover:underline cursor-pointer">
                 {note.title}
               </h3>
               <p className="text-gray-800">{note.content}</p>

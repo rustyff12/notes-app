@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
-export default function NotePage({ params }: { params: { id: string } }) {
+export default function NotePage() {
+  const { id } = useParams();
   const router = useRouter();
+
   const [note, setNote] = useState<{
     id: number;
     title: string;
@@ -15,18 +17,20 @@ export default function NotePage({ params }: { params: { id: string } }) {
   const [form, setForm] = useState({ title: "", content: "" });
 
   useEffect(() => {
-    fetch(`/api/notes/${params.id}`)
+    if (!id) return;
+
+    fetch(`/api/notes/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setNote(data);
         setForm({ title: data.title, content: data.content });
         setLoading(false);
       });
-  }, [params.id]);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch(`/api/notes/${params.id}/edit`, {
+    await fetch(`/api/notes/${id}/edit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -39,7 +43,10 @@ export default function NotePage({ params }: { params: { id: string } }) {
 
   return (
     <main className="max-w-xl mx-auto p-4">
-      <Link href="/" className="text-blue-600 hover:underline block mb-4">
+      <Link
+        href="/"
+        className="text-sm text-blue-500 hover:underline block mb-4"
+      >
         ← Home
       </Link>
 
@@ -57,29 +64,31 @@ export default function NotePage({ params }: { params: { id: string } }) {
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded mr-2"
+          className="bg-blue-600 text-white px-4 py-2 rounded mr-2 cursor-pointer"
         >
           Save
         </button>
       </form>
 
-      <button
-        onClick={async () => {
-          const confirmed = confirm(
-            "Are you sure you want to delete this note?"
-          );
-          if (!confirmed) return;
+      <form action={`/api/notes/${note.id}/delete`} method="POST">
+        <button
+          onClick={async () => {
+            const res = await fetch(`/api/notes/${note.id}/delete`, {
+              method: "POST",
+            });
 
-          await fetch(`/api/notes/${note.id}/delete`, {
-            method: "POST",
-          });
-
-          router.push("/");
-        }}
-        className="bg-red-600 text-white px-4 py-2 rounded mt-2"
-      >
-        Delete
-      </button>
+            if (res.ok) {
+              router.push("/");
+              router.refresh();
+            } else {
+              alert("Failed to delete note.");
+            }
+          }}
+          className="bg-red-600 text-white px-4 py-2 rounded mt-2"
+        >
+          Delete
+        </button>
+      </form>
     </main>
   );
 }
