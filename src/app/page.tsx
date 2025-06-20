@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type Note = {
   id: number;
@@ -64,12 +65,16 @@ export default function Home() {
 
       <ul>
         {notes.map((note) => (
-          <li key={note.id} className="border p-3 mb-2 rounded">
-            <h3 className="font-semibold">{note.title}</h3>
-            <p>{note.content}</p>
-            <small className="text-gray-500">
-              {new Date(note.createdAt).toLocaleString()}
-            </small>
+          <li key={note.id} className="border p-3 mb-2 rounded hover:shadow">
+            <Link href={`/notes/${note.id}`}>
+              <h3 className="font-semibold text-blue-600 hover:underline">
+                {note.title}
+              </h3>
+              <p className="text-gray-800">{note.content}</p>
+              <small className="text-gray-500">
+                {new Date(note.createdAt).toLocaleString()}
+              </small>
+            </Link>
           </li>
         ))}
       </ul>
