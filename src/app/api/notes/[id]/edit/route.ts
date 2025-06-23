@@ -4,14 +4,11 @@ import sanitizeHtml from "sanitize-html";
 
 const prisma = new PrismaClient();
 
-type Context = {
-  params: {
-    id: string;
-  };
-};
-
-export async function POST(req: NextRequest, { params }: Context) {
-  const { id } = params;
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Record<string, string> }
+) {
+  const id = params.id;
 
   const body = await req.json();
   const sanitizedTitle = sanitizeHtml(body.title);
