@@ -6,9 +6,9 @@ const prisma = new PrismaClient();
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Record<string, string> }
+  context: { params: { id: string } }
 ) {
-  const id = params.id;
+  const { id } = context.params;
 
   const body = await req.json();
   const sanitizedTitle = sanitizeHtml(body.title);
