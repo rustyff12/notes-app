@@ -1,14 +1,16 @@
 import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import sanitizeHtml from "sanitize-html";
 
 const prisma = new PrismaClient();
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type Context = {
+  params: {
+    id: string;
+  };
+};
+
+export async function POST(req: NextRequest, { params }: Context) {
   const { id } = params;
 
   const body = await req.json();
