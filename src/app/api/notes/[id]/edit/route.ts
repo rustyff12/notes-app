@@ -19,5 +19,6 @@ export async function POST(
       content: sanitizedContent,
     },
   });
+
   return NextResponse.json({ success: true });
 }
