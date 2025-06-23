@@ -20,8 +20,13 @@ export async function POST(
     });
 
     return new Response(null, { status: 204 });
-  } catch (error: any) {
-    if (error.code === "P2025") {
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2025"
+    ) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
 
