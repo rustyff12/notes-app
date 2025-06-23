@@ -4,16 +4,15 @@ import sanitizeHtml from "sanitize-html";
 
 const prisma = new PrismaClient();
 
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: Request, context: { params: { id: string } }) {
+  const { id } = context.params;
+
   const body = await req.json();
   const sanitizedTitle = sanitizeHtml(body.title);
   const sanitizedContent = sanitizeHtml(body.content);
 
   await prisma.note.update({
-    where: { id: Number(params.id) },
+    where: { id: Number(id) },
     data: {
       title: sanitizedTitle,
       content: sanitizedContent,
