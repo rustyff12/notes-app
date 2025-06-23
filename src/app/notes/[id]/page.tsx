@@ -28,7 +28,20 @@ export default function NotePage() {
       });
   }, [id]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleDeleteClick() {
+    const res = await fetch(`/api/notes/${note?.id}/delete`, {
+      method: "POST",
+    });
+
+    if (res.ok) {
+      router.push("/");
+      router.refresh();
+    } else {
+      alert("Failed to delete note.");
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     await fetch(`/api/notes/${id}/edit`, {
       method: "POST",
@@ -36,7 +49,7 @@ export default function NotePage() {
       body: JSON.stringify(form),
     });
     router.refresh();
-  };
+  }
 
   if (loading) return <p>Loading...</p>;
   if (!note) return <p>Note not found</p>;
@@ -70,25 +83,12 @@ export default function NotePage() {
         </button>
       </form>
 
-      <form action={`/api/notes/${note.id}/delete`} method="POST">
-        <button
-          onClick={async () => {
-            const res = await fetch(`/api/notes/${note.id}/delete`, {
-              method: "POST",
-            });
-
-            if (res.ok) {
-              router.push("/");
-              router.refresh();
-            } else {
-              alert("Failed to delete note.");
-            }
-          }}
-          className="bg-red-600 text-white px-4 py-2 rounded mt-2"
-        >
-          Delete
-        </button>
-      </form>
+      <button
+        onClick={handleDeleteClick}
+        className="bg-red-600 text-white px-4 py-2 rounded mt-2"
+      >
+        Delete
+      </button>
     </main>
   );
 }
